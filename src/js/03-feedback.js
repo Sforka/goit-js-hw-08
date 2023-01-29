@@ -10,11 +10,8 @@ const refs = {
 
 refs.form.addEventListener('submit', onFormSubmit);
 refs.form.addEventListener('input', throttle(onformInput, 1000));
-if (localStorage.getItem(STORAGE_KEY)) {
-  const saveData = JSON.parse(localStorage.getItem(STORAGE_KEY));
-  if (saveData.message != undefined) refs.textarea.value = saveData.message || '';
-  if (saveData.email != undefined) refs.email.value = saveData.email || '';
-}
+
+populateInput();
 
 function onFormSubmit(event) {
   event.preventDefault();
@@ -30,4 +27,19 @@ function onformInput(event) {
   console.log(event.target);
   formData[event.target.name] = [event.target.value];
   localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+}
+
+
+function populateInput() {
+  const saveData = localStorage.getItem(STORAGE_KEY);
+ 
+  if (saveData) {
+ 
+    const parseSaveData = JSON.parse(saveData);
+ 
+    Object.entries(parseSaveData).forEach(([name, value]) => {
+      formData[name] = value;
+      refs.form.elements[name].value = value;
+    });
+  };
 }
